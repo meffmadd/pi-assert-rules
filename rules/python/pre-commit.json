@@ -1,0 +1,12 @@
+{
+  "pre-commit-run-all-files": {
+    "description": "Runs pre-commit on all files when the agent goes idle.",
+    "hook": "agent_end",
+    "shell": "pre-commit run --all-files"
+  },
+  "pre-commit-run": {
+    "description": "Runs pre-commit on changed files when the agent goes idle.",
+    "hook": "agent_end",
+    "shell": "pre-commit run"
+  }
+}

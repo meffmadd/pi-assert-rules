@@ -1,0 +1,7 @@
+{
+  "django-tests": {
+    "description": "Runs the Django test suite (python manage.py test) when the agent goes idle.",
+    "hook": "agent_end",
+    "shell": "python manage.py test"
+  }
+}

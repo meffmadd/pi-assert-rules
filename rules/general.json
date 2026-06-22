@@ -1,0 +1,56 @@
+{
+  "write-only-md": {
+    "description": "Allows writes only to *.md files.",
+    "hook": "tool_call",
+    "filter": { "toolName": "write" },
+    "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.md\"' && exit 0 || exit 1"
+  },
+  "no-env-access": {
+    "description": "Blocks reads and writes to .env files.",
+    "hook": "tool_call",
+    "when": "test \"$PI_TOOL_NAME\" = read -o \"$PI_TOOL_NAME\" = write",
+    "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.env\"' && exit 1 || exit 0"
+  },
+  "read-max-500-chars": {
+    "description": "Blocks read results exceeding 500 characters (approx. 125 tokens).",
+    "hook": "tool_result",
+    "filter": { "toolName": "read" },
+    "shell": "[ ${#PI_TOOL_RESULT} -le 500 ] || exit 1"
+  },
+  "read-max-10000-chars": {
+    "description": "Blocks read results exceeding 10,000 characters (approx. 2,500 tokens).",
+    "hook": "tool_result",
+    "filter": { "toolName": "read" },
+    "shell": "[ ${#PI_TOOL_RESULT} -le 10000 ] || exit 1"
+  },
+  "read-max-20000-chars": {
+    "description": "Blocks read results exceeding 20,000 characters (approx. 5,000 tokens).",
+    "hook": "tool_result",
+    "filter": { "toolName": "read" },
+    "shell": "[ ${#PI_TOOL_RESULT} -le 20000 ] || exit 1"
+  },
+  "read-max-50000-chars": {
+    "description": "Blocks read results exceeding 50,000 characters (approx. 12,500 tokens).",
+    "hook": "tool_result",
+    "filter": { "toolName": "read" },
+    "shell": "[ ${#PI_TOOL_RESULT} -le 50000 ] || exit 1"
+  },
+  "read-max-100000-chars": {
+    "description": "Blocks read results exceeding 100,000 characters (approx. 25,000 tokens).",
+    "hook": "tool_result",
+    "filter": { "toolName": "read" },
+    "shell": "[ ${#PI_TOOL_RESULT} -le 100000 ] || exit 1"
+  },
+  "read-max-200000-chars": {
+    "description": "Blocks read results exceeding 200,000 characters (approx. 50,000 tokens).",
+    "hook": "tool_result",
+    "filter": { "toolName": "read" },
+    "shell": "[ ${#PI_TOOL_RESULT} -le 200000 ] || exit 1"
+  },
+  "read-max-500000-chars": {
+    "description": "Blocks read results exceeding 500,000 characters (approx. 125,000 tokens).",
+    "hook": "tool_result",
+    "filter": { "toolName": "read" },
+    "shell": "[ ${#PI_TOOL_RESULT} -le 500000 ] || exit 1"
+  }
+}

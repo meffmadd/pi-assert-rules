@@ -1,0 +1,52 @@
+{
+  "require-no-change": {
+    "description": "Blocks any changed/added lines — requires the most concise solution (zero changes).",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -eq 0 ] || exit 1"
+  },
+  "require-more-deletions": {
+    "description": "Requires more deletions than additions (e.g. for a refactoring).",
+    "hook": "agent_end",
+    "shell": "A_D=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1} $2~/^[0-9]+$/{d+=$2} END{print a+0, d+0}'); set -- $A_D; [ \"$1\" -lt \"$2\" ] || exit 1"
+  },
+  "diff-max-10-lines": {
+    "description": "Blocks solutions changing/adding more than 10 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 10 ] || exit 1"
+  },
+  "diff-max-50-lines": {
+    "description": "Blocks solutions changing/adding more than 50 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 50 ] || exit 1"
+  },
+  "diff-max-100-lines": {
+    "description": "Blocks solutions changing/adding more than 100 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 100 ] || exit 1"
+  },
+  "diff-max-250-lines": {
+    "description": "Blocks solutions changing/adding more than 250 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 250 ] || exit 1"
+  },
+  "diff-max-500-lines": {
+    "description": "Blocks solutions changing/adding more than 500 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 500 ] || exit 1"
+  },
+  "diff-max-1000-lines": {
+    "description": "Blocks solutions changing/adding more than 1,000 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 1000 ] || exit 1"
+  },
+  "diff-max-2000-lines": {
+    "description": "Blocks solutions changing/adding more than 2,000 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 2000 ] || exit 1"
+  },
+  "diff-max-5000-lines": {
+    "description": "Blocks solutions changing/adding more than 5,000 lines.",
+    "hook": "agent_end",
+    "shell": "CHANGED=$({ git diff HEAD --numstat; git ls-files --others --exclude-standard|while read f; do printf \"%s\\t0\\t%s\\n\" \"$(wc -l<\"$f\" 2>/dev/null)\" \"$f\"; done; }|awk '$1~/^[0-9]+$/{a+=$1;d+=$2}END{print a+d+0}'); [ \"$CHANGED\" -le 5000 ] || exit 1"
+  }
+}
