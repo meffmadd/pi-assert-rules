@@ -1,0 +1,37 @@
+{
+  "deny-k-alias": {
+    "description": "Blocks the popular 'k' alias for kubectl — catches all 'k ...' invocations regardless of subcommand. Install separately from kubectl-* to guard the alias even when kubectl itself is allowed. Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "hook": "tool_call",
+    "filter": { "toolName": "bash" },
+    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'k' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-create": {
+    "description": "Blocks new resource creation: kubectl create, apply, replace, run. Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "hook": "tool_call",
+    "filter": { "toolName": "bash" },
+    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl create;kubectl apply;kubectl replace;kubectl run' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-delete": {
+    "description": "Blocks resource removal: kubectl delete, drain, taint. Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "hook": "tool_call",
+    "filter": { "toolName": "bash" },
+    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl delete;kubectl drain;kubectl taint' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-mutate": {
+    "description": "Blocks in-place mutations: kubectl edit, scale, patch, rollout. Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "hook": "tool_call",
+    "filter": { "toolName": "bash" },
+    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl edit;kubectl scale;kubectl patch;kubectl rollout' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-exec": {
+    "description": "Blocks running commands inside a pod (kubectl exec). Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "hook": "tool_call",
+    "filter": { "toolName": "bash" },
+    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl exec' -i \"$CMD\" -q"
+  }
+}
