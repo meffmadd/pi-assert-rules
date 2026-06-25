@@ -3,5 +3,20 @@
     "description": "Runs the Django test suite (python manage.py test) when the agent goes idle.",
     "hook": "agent_end",
     "shell": "python manage.py test"
+  },
+  "django-check": {
+    "description": "Runs Django's system check framework (python manage.py check) when the agent goes idle.",
+    "hook": "agent_end",
+    "shell": "python manage.py check"
+  },
+  "django-check-deploy": {
+    "description": "Runs Django's deployment-readiness checks (python manage.py check --deploy) when the agent goes idle. Catches DEBUG=True, missing ALLOWED_HOSTS, insecure secret key, etc.",
+    "hook": "agent_end",
+    "shell": "python manage.py check --deploy"
+  },
+  "django-makemigrations-check": {
+    "description": "Fails if model changes are not reflected in a migration (python manage.py makemigrations --check --dry-run) when the agent goes idle. Catches un-migrated model drift before commit; writes nothing.",
+    "hook": "agent_end",
+    "shell": "python manage.py makemigrations --check --dry-run"
   }
 }

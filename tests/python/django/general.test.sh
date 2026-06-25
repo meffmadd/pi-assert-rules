@@ -20,4 +20,13 @@ trap 'rm -rf "$FIX"' EXIT INT TERM
 printf -- '--- django-tests (fails closed without manage.py)\n'
 ae django-tests NZ "$FIX"
 
+printf -- '--- django-check (fails closed without manage.py)\n'
+ae django-check NZ "$FIX"
+
+printf -- '--- django-check-deploy (fails closed without manage.py)\n'
+ae django-check-deploy NZ "$FIX"
+
+printf -- '--- django-makemigrations-check (fails closed without manage.py)\n'
+ae django-makemigrations-check NZ "$FIX"
+
 summary
