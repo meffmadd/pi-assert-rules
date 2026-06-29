@@ -5,6 +5,12 @@
     "filter": { "toolName": "write" },
     "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.md\"' && exit 0 || exit 1"
   },
+  "edit-only-md": {
+    "description": "Allows edits only to *.md files.",
+    "hook": "tool_call",
+    "filter": { "toolName": "edit" },
+    "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.md\"' && exit 0 || exit 1"
+  },
   "no-env-access": {
     "description": "Blocks reads and writes to .env files.",
     "hook": "tool_call",

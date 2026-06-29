@@ -2,6 +2,7 @@
 # ↔ rules/general.json
 # Covers:
 #   - write-only-md      (tool_call, grep on MINIFIED PI_TOOL_INPUT)
+#   - edit-only-md       (tool_call, grep on MINIFIED PI_TOOL_INPUT, filter toolName=edit)
 #   - no-env-access      (tool_call, `when` guards on PI_TOOL_NAME → skip path)
 #   - read-max-*-chars   (tool_result, ${#PI_TOOL_RESULT} boundary off-by-one)
 #
@@ -22,6 +23,13 @@ tc write-only-md 0 write '{"path":"README.md"}'
 tc write-only-md 0 write '{"path":"docs/sub/a.md"}'
 tc write-only-md 1 write '{"path":"notes.txt"}'
 tc write-only-md 1 write '{"path":"image.png"}'
+
+printf -- '--- edit-only-md (tool_call, filter toolName=edit)
+'
+tc edit-only-md 0 edit '{"path":"README.md"}'
+tc edit-only-md 0 edit '{"path":"docs/sub/a.md"}'
+tc edit-only-md 1 edit '{"path":"notes.txt"}'
+tc edit-only-md 1 edit '{"path":"image.png"}'
 
 printf -- '--- no-env-access (`when` fires only for read/write → test the skip path too)\n'
 tc no-env-access 1 read  '{"path":".env"}'

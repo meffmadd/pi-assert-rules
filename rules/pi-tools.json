@@ -1,0 +1,44 @@
+{
+  "block-read": {
+    "description": "Unconditionally blocks the read tool. Enable to forbid all file reads.",
+    "hook": "tool_call",
+    "filter": { "toolName": "read" },
+    "shell": "false"
+  },
+  "block-bash": {
+    "description": "Unconditionally blocks the bash tool. Enable to forbid all shell command execution.",
+    "hook": "tool_call",
+    "filter": { "toolName": "bash" },
+    "shell": "false"
+  },
+  "block-edit": {
+    "description": "Unconditionally blocks the edit tool. Enable to forbid all targeted file edits.",
+    "hook": "tool_call",
+    "filter": { "toolName": "edit" },
+    "shell": "false"
+  },
+  "block-write": {
+    "description": "Unconditionally blocks the write tool. Enable to forbid all file creation and overwrites.",
+    "hook": "tool_call",
+    "filter": { "toolName": "write" },
+    "shell": "false"
+  },
+  "block-grep": {
+    "description": "Unconditionally blocks the grep tool. Enable to forbid all content searches.",
+    "hook": "tool_call",
+    "filter": { "toolName": "grep" },
+    "shell": "false"
+  },
+  "block-find": {
+    "description": "Unconditionally blocks the find tool. Enable to forbid all filesystem searches.",
+    "hook": "tool_call",
+    "filter": { "toolName": "find" },
+    "shell": "false"
+  },
+  "block-ls": {
+    "description": "Unconditionally blocks the ls tool. Enable to forbid all directory listings.",
+    "hook": "tool_call",
+    "filter": { "toolName": "ls" },
+    "shell": "false"
+  }
+}
