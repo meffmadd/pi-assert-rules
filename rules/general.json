@@ -58,5 +58,11 @@
     "hook": "tool_result",
     "filter": { "toolName": "read" },
     "shell": "[ ${#PI_TOOL_RESULT} -le 500000 ] || exit 1"
+  },
+  "no-env-secrets-in-output": {
+    "description": "Blocks tool results that leak a secret read from .env. Parses .env at the project root, collecting values of vars whose name contains 'key' or 'secret' (case-insensitive, substring match), and blocks (exit 1) if any such value of length >= 8 appears in PI_TOOL_RESULT. The length floor skips trivial flag values like DEBUG_KEY=true. No-ops (allow) when .env is absent (when guard) or when no qualifying secrets are found. Uses grep -F (fixed-string) so values containing regex metacharacters are matched literally.",
+    "hook": "tool_result",
+    "when": "test -f .env",
+    "shell": "T=$(mktemp)||exit 0; awk 'BEGIN{D=sprintf(\"%c\",34);S=sprintf(\"%c\",39)} {l=$0; sub(/^[[:space:]]+/,\"\",l); if(l==\"\"||substr(l,1,1)==\"#\")next; sub(/^export[[:space:]]+/,\"\",l); eq=index(l,\"=\"); if(eq==0)next; k=tolower(substr(l,1,eq-1)); v=substr(l,eq+1); sub(/^[[:space:]]+/,\"\",v); sub(/[[:space:]]+$/,\"\",v); if(substr(v,1,1)==D&&substr(v,length(v),1)==D)v=substr(v,2,length(v)-2); else if(substr(v,1,1)==S&&substr(v,length(v),1)==S)v=substr(v,2,length(v)-2); if((index(k,\"key\")>0||index(k,\"secret\")>0)&&length(v)>=8)print v }' .env >\"$T\"; if [ -s \"$T\" ]&&printf '%s' \"$PI_TOOL_RESULT\"|grep -Fq -f \"$T\"; then r=1; else r=0; fi; rm -f \"$T\"; exit $r"
   }
 }
