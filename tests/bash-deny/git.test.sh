@@ -4,7 +4,8 @@
 # commands (&& ;), and the intent splits (git reset --soft vs --hard;
 # git branch -d vs -D). Cases match the hand-verified matrix.
 #
-# Skips automatically when `when` fails (bash-deny or jq not on PATH).
+# Skips the whole file when bash-deny or jq aren't on PATH (the rules need
+# the deps to run their checks).
 
 TEST_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 REPO_ROOT=$TEST_DIR
@@ -13,6 +14,13 @@ while [ "$REPO_ROOT" != "/" ] && [ ! -d "$REPO_ROOT/rules" ]; do
 done
 TARGET=rules/bash-deny/git.json
 . "$REPO_ROOT/tests/helpers/harness.sh"
+
+# Skip the whole file when bash-deny or jq aren't on PATH (the rules need
+# the deps to run their checks).
+command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || {
+  printf '  %b⊘%b skipped (bash-deny/jq not on PATH)\n\n' "$C_SK" "$C_N"
+  exit 0
+}
 
 printf -- '--- deny-git-external\n'
 tc deny-git-external 1 bash '{"command":"git -C ../repo log","timeout":30}'

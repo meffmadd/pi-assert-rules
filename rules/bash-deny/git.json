@@ -1,37 +1,32 @@
 {
   "deny-git-external": {
-    "description": "Blocks git operations against an external repository path (git -C <path> ...). Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "description": "Blocks git operations against an external repository path (git -C <path> ...).",
     "hook": "tool_call",
     "filter": { "toolName": "bash" },
-    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git -C' -i \"$CMD\" -q"
   },
   "deny-git-commit": {
-    "description": "Blocks local history commits (git commit). Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "description": "Blocks local history commits (git commit).",
     "hook": "tool_call",
     "filter": { "toolName": "bash" },
-    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git commit' -i \"$CMD\" -q"
   },
   "deny-git-push": {
-    "description": "Blocks remote uploads (git push). Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "description": "Blocks remote uploads (git push).",
     "hook": "tool_call",
     "filter": { "toolName": "bash" },
-    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git push' -i \"$CMD\" -q"
   },
   "deny-git-history-rewrite": {
-    "description": "Blocks history-rewriting commands (git reset --hard, git rebase). Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "description": "Blocks history-rewriting commands (git reset --hard, git rebase).",
     "hook": "tool_call",
     "filter": { "toolName": "bash" },
-    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git reset --hard;git rebase' -i \"$CMD\" -q"
   },
   "deny-git-destructive": {
-    "description": "Blocks work-loss commands: git clean, git branch -D (force delete), git stash drop, git stash clear, git checkout -- (discard working tree). Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "description": "Blocks work-loss commands: git clean, git branch -D (force delete), git stash drop, git stash clear, git checkout -- (discard working tree).",
     "hook": "tool_call",
     "filter": { "toolName": "bash" },
-    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git clean;git branch -D;git stash drop;git stash clear;git checkout --' -i \"$CMD\" -q"
   }
 }

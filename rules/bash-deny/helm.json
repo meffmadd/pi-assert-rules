@@ -1,16 +1,14 @@
 {
   "deny-helm-release-mgmt": {
-    "description": "Blocks Helm release lifecycle changes: uninstall, install, upgrade, rollback. Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "description": "Blocks Helm release lifecycle changes: uninstall, install, upgrade, rollback.",
     "hook": "tool_call",
     "filter": { "toolName": "bash" },
-    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm uninstall;helm install;helm upgrade;helm rollback' -i \"$CMD\" -q"
   },
   "deny-helm-plugin": {
-    "description": "Blocks Helm plugin installs (helm plugin install). Requires bash-deny and jq on PATH; no-ops if either is missing.",
+    "description": "Blocks Helm plugin installs (helm plugin install).",
     "hook": "tool_call",
     "filter": { "toolName": "bash" },
-    "when": "command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1",
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm plugin install' -i \"$CMD\" -q"
   }
 }
