@@ -9,11 +9,10 @@ done
 TARGET=rules/bash-deny/helm.json
 . "$REPO_ROOT/tests/helpers/harness.sh"
 
-# Skip the whole file when bash-deny or jq aren't on PATH (the rules need
-# the deps to run their checks).
+# Hard requirement: bash-deny and jq must be on PATH to run these tests.
 command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || {
-  printf '  %b⊘%b skipped (bash-deny/jq not on PATH)\n\n' "$C_SK" "$C_N"
-  exit 0
+  printf '  %b✗%b FAIL: bash-deny and jq must be on PATH to run these tests\n' "$C_BAD" "$C_N"
+  exit 1
 }
 
 printf -- '--- deny-helm-release-mgmt\n'
