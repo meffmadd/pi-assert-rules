@@ -164,4 +164,59 @@ tr no-env-secrets-in-output 1 bash '{"command":"env"}' 'API_KEY=bashleak123456' 
 # --- `when` guard: no .env in cwd → assert SKIPPED (counts as skip ⊘) ---
 tr no-env-secrets-in-output 0 read  '{"path":"x"}' 'sk-live-1234567890abcdef' "$NOENVFIX"
 
+printf -- '--- paths-in-cwd (tool_call, read/write/edit .path containment via python3 realpath) ---\n'
+# python3 resolves the path; if absent the assert fails CLOSED in prod. Here we
+# just skip the block (no python3 in CI is unlikely; macOS/Linux both ship it).
+if ! command -v python3 >/dev/null 2>&1; then
+  printf '  (python3 not found — paths-in-cwd cases skipped)\n'
+else
+  # os.path.realpath works on non-existent paths, but the harness `cd`s into
+  # PI_CWD before running the shell, so CWD must be a real dir. A throw-away
+  # dir also lets us name the basename for the sibling-loop case and build a
+  # real symlink to prove symlink-awareness (a lexical resolver would MISS it).
+  PATHFIX=$(mktemp -d "${TMPDIR:-/tmp}/par-paths.XXXXXX")
+  SLNKDIR=$(mktemp -d "${TMPDIR:-/tmp}/par-slnk.XXXXXX")
+  trap 'rm -rf "$ENVFIX" "$NOENVFIX" "$PATHFIX" "$SLNKDIR"' EXIT INT TERM
+  PATHFIX=$(CDPATH= cd -- "$PATHFIX" && pwd); PBASE=$(basename "$PATHFIX")
+  ln -sf /etc "$SLNKDIR/escape" 2>/dev/null || true
+  SLNKDIR=$(CDPATH= cd -- "$SLNKDIR" && pwd)
+
+  # allow: relative paths inside cwd (all three tools)
+  tc paths-in-cwd 0 read  '{"path":"README.md"}' "$PATHFIX"
+  tc paths-in-cwd 0 write '{"path":"src/main.ts"}' "$PATHFIX"
+  tc paths-in-cwd 0 edit  '{"path":"docs/guide.md"}' "$PATHFIX"
+  tc paths-in-cwd 0 read  '{"path":"./README.md"}' "$PATHFIX"
+  tc paths-in-cwd 0 read  '{"path":"a/b/c/deep.ts"}' "$PATHFIX"
+  # allow: ./ and ../ segments that resolve back inside cwd
+  tc paths-in-cwd 0 read '{"path":"sub/../README.md"}' "$PATHFIX"
+  tc paths-in-cwd 0 read '{"path":"./a/b/../c.ts"}' "$PATHFIX"
+  tc paths-in-cwd 0 read '{"path":"sub/../deep/../x"}' "$PATHFIX"
+  tc paths-in-cwd 0 read '{"path":"sub/.."}' "$PATHFIX"   # -> cwd itself
+  tc paths-in-cwd 0 read '{"path":"."}' "$PATHFIX"        # -> cwd itself
+  # ../<BASE>/sub: climbs to parent then back INTO cwd/sub -> allow
+  tc paths-in-cwd 0 read "{\"path\":\"../$PBASE/sub\"}" "$PATHFIX"
+  # allow: extra input fields ignored; .. only matches full segments
+  tc paths-in-cwd 0 read  '{"path":"x.ts","offset":100,"limit":50}' "$PATHFIX"
+  tc paths-in-cwd 0 write '{"path":"y.ts","content":"hi"}' "$PATHFIX"
+  tc paths-in-cwd 0 edit  '{"path":"z.ts","edits":[{"oldText":"a","newText":"b"}]}' "$PATHFIX"
+  tc paths-in-cwd 0 read '{"path":"foo..bar.ts"}' "$PATHFIX"
+  tc paths-in-cwd 0 read '{"path":"..foo"}' "$PATHFIX"
+  tc paths-in-cwd 0 read '{"path":"sub/..bar"}' "$PATHFIX"
+  # allow: empty / missing .path is not our concern
+  tc paths-in-cwd 0 read '{"path":""}' "$PATHFIX"
+  tc paths-in-cwd 0 bash '{"command":"ls"}' "$PATHFIX"
+  # block: ../ escapes above cwd
+  tc paths-in-cwd 1 read  '{"path":"../secret"}' "$PATHFIX"
+  tc paths-in-cwd 1 write '{"path":"../escape.txt"}' "$PATHFIX"
+  tc paths-in-cwd 1 edit  '{"path":"../../etc/passwd"}' "$PATHFIX"
+  tc paths-in-cwd 1 read  '{"path":"sub/../../escape"}' "$PATHFIX"
+  # block: absolute paths outside cwd (cwd's own parent is outside)
+  tc paths-in-cwd 1 read '{"path":"/etc/passwd"}' "$PATHFIX"
+  tc paths-in-cwd 1 write '{"path":"/tmp/x"}' "$PATHFIX"
+  tc paths-in-cwd 1 read "{\"path\":\"$(dirname "$PATHFIX")\"}" "$PATHFIX"
+  tc paths-in-cwd 1 read "{\"path\":\"$(dirname "$PATHFIX")/other\"}" "$PATHFIX"
+  # block: symlink inside cwd -> /etc (lexical resolvers would MISS this)
+  tc paths-in-cwd 1 read '{"path":"escape/passwd"}' "$SLNKDIR"
+fi
+
 summary

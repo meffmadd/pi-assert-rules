@@ -17,6 +17,12 @@
     "when": "test \"$PI_TOOL_NAME\" = read -o \"$PI_TOOL_NAME\" = write",
     "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.env\"' && exit 1 || exit 0"
   },
+  "paths-in-cwd": {
+    "description": "Blocks read/write/edit whose .path resolves outside the project cwd. Resolves with python3 os.path.realpath on both the path and PI_CWD (joined when relative), so it handles ../, ./, absolute paths, and double slashes, AND follows symlinks — a symlink inside cwd that points outside is blocked too. Requires python3 (stdlib only, no pip). Fails closed (blocks) if python3 is missing or errors. Empty or missing .path is allowed (nothing to escape).",
+    "hook": "tool_call",
+    "filter": { "toolName": ["read", "write", "edit"] },
+    "shell": "python3 -c 'import os,sys; d=__import__(\"json\").loads(os.environ[\"PI_TOOL_INPUT\"]); p=d.get(\"path\",\"\"); c=os.path.realpath(os.environ[\"PI_CWD\"]); r=os.path.realpath(p if os.path.isabs(p) else os.path.join(c,p)); sys.exit(0 if (not p or r==c or r.startswith(c+os.sep)) else 1)' || exit 1"
+  },
   "read-max-500-chars": {
     "description": "Blocks read results exceeding 500 characters (approx. 125 tokens).",
     "hook": "tool_result",
