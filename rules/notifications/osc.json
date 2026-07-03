@@ -1,0 +1,22 @@
+{
+  "notify-osc-auto": {
+    "description": "Desktop notification on agent_end via OSC escape sequences. Auto-detects terminal: Kitty (KITTY_WINDOW_ID) -> OSC 99, iTerm2 (TERM_PROGRAM=iTerm.app or ITERM_SESSION_ID) -> OSC 9, otherwise -> OSC 777 (Ghostty, WezTerm, rxvt-unicode). tmux-aware (wraps in DCS passthrough). Writes to /dev/tty since pi-assert discards assert stdout; set PI_NOTIFY_OUT to redirect. Always exits 0 (never blocks). Enable only one notify-osc-* assert.",
+    "hook": "agent_end",
+    "shell": "ESC=$(printf '\\033'); BEL=$(printf '\\007'); ST=$(printf '\\033\\\\'); if [ -n \"$KITTY_WINDOW_ID\" ]; then SEQ=\"${ESC}]99;i=1:d=0;Pi${ST}${ESC}]99;i=1:p=body;Ready for input${ST}\"; elif [ \"$TERM_PROGRAM\" = \"iTerm.app\" ] || [ -n \"$ITERM_SESSION_ID\" ]; then SEQ=\"${ESC}]9;Pi: Ready for input${BEL}\"; else SEQ=\"${ESC}]777;notify;Pi;Ready for input${BEL}\"; fi; if [ -n \"$TMUX\" ]; then SEQ=\"${ESC}Ptmux;$(printf '%s' \"$SEQ\" | sed \"s/${ESC}/${ESC}${ESC}/g\")${ST}\"; fi; printf '%s' \"$SEQ\" >\"${PI_NOTIFY_OUT:-/dev/tty}\" 2>/dev/null; exit 0"
+  },
+  "notify-osc-777": {
+    "description": "OSC 777 desktop notification (Ghostty, WezTerm, rxvt-unicode) on agent_end. tmux-aware (DCS passthrough). Writes to /dev/tty since pi-assert discards stdout; set PI_NOTIFY_OUT to redirect. Always exits 0. Use when notify-osc-auto misdetects your terminal. Enable only one notify-osc-* assert.",
+    "hook": "agent_end",
+    "shell": "ESC=$(printf '\\033'); BEL=$(printf '\\007'); ST=$(printf '\\033\\\\'); SEQ=\"${ESC}]777;notify;Pi;Ready for input${BEL}\"; if [ -n \"$TMUX\" ]; then SEQ=\"${ESC}Ptmux;$(printf '%s' \"$SEQ\" | sed \"s/${ESC}/${ESC}${ESC}/g\")${ST}\"; fi; printf '%s' \"$SEQ\" >\"${PI_NOTIFY_OUT:-/dev/tty}\" 2>/dev/null; exit 0"
+  },
+  "notify-osc-9": {
+    "description": "OSC 9 notification (iTerm2) on agent_end. tmux-aware (DCS passthrough). Writes to /dev/tty since pi-assert discards stdout; set PI_NOTIFY_OUT to redirect. Always exits 0. Use when notify-osc-auto misdetects your terminal. Enable only one notify-osc-* assert.",
+    "hook": "agent_end",
+    "shell": "ESC=$(printf '\\033'); BEL=$(printf '\\007'); ST=$(printf '\\033\\\\'); SEQ=\"${ESC}]9;Pi: Ready for input${BEL}\"; if [ -n \"$TMUX\" ]; then SEQ=\"${ESC}Ptmux;$(printf '%s' \"$SEQ\" | sed \"s/${ESC}/${ESC}${ESC}/g\")${ST}\"; fi; printf '%s' \"$SEQ\" >\"${PI_NOTIFY_OUT:-/dev/tty}\" 2>/dev/null; exit 0"
+  },
+  "notify-osc-99": {
+    "description": "OSC 99 notification (Kitty) on agent_end: title part (i=1:d=0) then body (i=1:p=body). tmux-aware (DCS passthrough). Writes to /dev/tty since pi-assert discards stdout; set PI_NOTIFY_OUT to redirect. Always exits 0. Use when notify-osc-auto misdetects your terminal. Enable only one notify-osc-* assert.",
+    "hook": "agent_end",
+    "shell": "ESC=$(printf '\\033'); BEL=$(printf '\\007'); ST=$(printf '\\033\\\\'); SEQ=\"${ESC}]99;i=1:d=0;Pi${ST}${ESC}]99;i=1:p=body;Ready for input${ST}\"; if [ -n \"$TMUX\" ]; then SEQ=\"${ESC}Ptmux;$(printf '%s' \"$SEQ\" | sed \"s/${ESC}/${ESC}${ESC}/g\")${ST}\"; fi; printf '%s' \"$SEQ\" >\"${PI_NOTIFY_OUT:-/dev/tty}\" 2>/dev/null; exit 0"
+  }
+}
