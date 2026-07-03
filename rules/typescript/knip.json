@@ -1,0 +1,7 @@
+{
+  "knip-run": {
+    "description": "Runs knip when the agent goes idle; blocks if unused files/exports/dependencies are detected.",
+    "hook": "agent_end",
+    "shell": "npx --no-install knip"
+  }
+}
