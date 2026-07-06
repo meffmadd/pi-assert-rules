@@ -1,9 +1,8 @@
 #!/bin/sh
 # ↔ rules/general.json
 # Covers:
-#   - write-only-md      (tool_call, grep on MINIFIED PI_TOOL_INPUT)
-#   - edit-only-md       (tool_call, grep on MINIFIED PI_TOOL_INPUT, filter toolName=edit)
-#   - no-env-access      (tool_call, `when` guards on PI_TOOL_NAME → skip path)
+#   - only-md            (tool_call, grep on MINIFIED PI_TOOL_INPUT, filter toolName=[write,edit])
+#   - no-env-access      (tool_call, filter toolName=[read,write], grep .path)
 #   - read-max-*-chars   (tool_result, ${#PI_TOOL_RESULT} boundary off-by-one)
 #
 # PI_TOOL_INPUT is minified JSON in production (JSON.stringify). The grep
@@ -18,26 +17,24 @@ done
 TARGET=rules/general.json
 . "$REPO_ROOT/tests/helpers/harness.sh"
 
-printf -- '--- write-only-md (tool_call, filter toolName=write)\n'
-tc write-only-md 0 write '{"path":"README.md"}'
-tc write-only-md 0 write '{"path":"docs/sub/a.md"}'
-tc write-only-md 1 write '{"path":"notes.txt"}'
-tc write-only-md 1 write '{"path":"image.png"}'
+printf -- '--- only-md (tool_call, filter toolName=[write,edit])\n'
+tc only-md 0 write '{"path":"README.md"}'
+tc only-md 0 write '{"path":"docs/sub/a.md"}'
+tc only-md 1 write '{"path":"notes.txt"}'
+tc only-md 1 write '{"path":"image.png"}'
+tc only-md 0 edit  '{"path":"README.md"}'
+tc only-md 0 edit  '{"path":"docs/sub/a.md"}'
+tc only-md 1 edit  '{"path":"notes.txt"}'
+tc only-md 1 edit  '{"path":"image.png"}'
 
-printf -- '--- edit-only-md (tool_call, filter toolName=edit)
-'
-tc edit-only-md 0 edit '{"path":"README.md"}'
-tc edit-only-md 0 edit '{"path":"docs/sub/a.md"}'
-tc edit-only-md 1 edit '{"path":"notes.txt"}'
-tc edit-only-md 1 edit '{"path":"image.png"}'
-
-printf -- '--- no-env-access (`when` fires only for read/write → test the skip path too)\n'
+printf -- '--- no-env-access (tool_call, filter toolName=[read,write])\n'
 tc no-env-access 1 read  '{"path":".env"}'
 tc no-env-access 0 read  '{"path":"README.md"}'
 tc no-env-access 1 write '{"path":"config/.env"}'
 # .env must be a path segment, not a substring — env.ts has no ".env"
 tc no-env-access 0 read  '{"path":"env.ts"}'
-# non read/write tool → `when` fails → assert SKIPPED (counts as skip, not fail)
+# non read/write tool → filter skips the assert in prod. The harness can't model
+# filter, so this confirms the shell itself is benign on a bash input (no "path").
 tc no-env-access 0 bash  '{"command":"cat .env"}'
 
 # Boundary matrix: at-limit must PASS (exit 0); limit+1 must BLOCK (exit 1).

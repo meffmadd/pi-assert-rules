@@ -9,7 +9,7 @@
 #   - PI_* env vars are merged ON TOP OF the inherited parent env (PATH etc.),
 #     not a clean env:  const merged = { ...process.env, ...PI_env }.
 #   - PI_TOOL_INPUT is JSON.stringify(input) → MINIFIED JSON (no spaces). The
-#     grep-based asserts (write-only-md, no-env-access) match `"path":"…"`
+#     grep-based asserts (only-md, no-env-access) match `"path":"…"`
 #     literally, so test inputs must be minified to mirror reality.
 #   - exit 0      = pass / allow.
 #   - non-zero    = block / fail  (or, for agent_end, trigger a new turn).

@@ -1,20 +1,14 @@
 {
-  "write-only-md": {
-    "description": "Allows writes only to *.md files.",
+  "only-md": {
+    "description": "Allows writes and edits only to *.md files.",
     "hook": "tool_call",
-    "filter": { "toolName": "write" },
-    "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.md\"' && exit 0 || exit 1"
-  },
-  "edit-only-md": {
-    "description": "Allows edits only to *.md files.",
-    "hook": "tool_call",
-    "filter": { "toolName": "edit" },
+    "filter": { "toolName": ["write", "edit"] },
     "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.md\"' && exit 0 || exit 1"
   },
   "no-env-access": {
     "description": "Blocks reads and writes to .env files.",
     "hook": "tool_call",
-    "when": "test \"$PI_TOOL_NAME\" = read -o \"$PI_TOOL_NAME\" = write",
+    "filter": { "toolName": ["read", "write"] },
     "shell": "echo \"$PI_TOOL_INPUT\" | grep -qE '\"path\":\"[^\"]*\\.env\"' && exit 1 || exit 0"
   },
   "paths-in-cwd": {
