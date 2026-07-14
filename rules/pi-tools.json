@@ -40,5 +40,13 @@
     "hook": "tool_call",
     "filter": { "toolName": "ls" },
     "shell": "false"
+  },
+  "read-only": {
+    "description": "Read-only mode: blocks bash, write, and edit (patch) so only read-style tools (read, grep, find, ls) remain usable — no shell execution, no file mutation.",
+    "preset": [
+      "meffmadd/pi-assert-rules/block-bash",
+      "meffmadd/pi-assert-rules/block-write",
+      "meffmadd/pi-assert-rules/block-edit"
+    ]
   }
 }

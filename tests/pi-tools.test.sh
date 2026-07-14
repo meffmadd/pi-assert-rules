@@ -40,4 +40,23 @@ tc block-find 1 find '{"path":"."}'
 printf -- '--- block-ls (unconditional, toolName=ls)\n'
 tc block-ls 1 ls '{"path":"."}'
 
+# read-only is a preset (no shell/hook), so the harness can't execute it —
+# pi-assert expands it to its member asserts at runtime via activeList().
+# Verify its contract instead: it bundles exactly block-bash + block-write +
+# block-edit (all defined in this file, so it installs non-dangling, no § badge)
+# and carries no shell/hook.
+printf -- '--- read-only (preset: block-bash + block-write + block-edit)\n'
+if jq -e '
+  .["read-only"].preset
+    == ["meffmadd/pi-assert-rules/block-bash",
+        "meffmadd/pi-assert-rules/block-write",
+        "meffmadd/pi-assert-rules/block-edit"]
+  and (.["read-only"].shell // null | not)
+  and (.["read-only"].hook // null | not)
+' "$TARGET" >/dev/null 2>&1; then
+  PASSED=$((PASSED+1)); printf '  %b✓%b read-only (preset)\n' "$C_OK" "$C_N"
+else
+  FAILED=$((FAILED+1)); printf '  %b✗%b read-only (preset)\n' "$C_BAD" "$C_N"
+fi
+
 summary

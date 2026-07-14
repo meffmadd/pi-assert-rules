@@ -3,7 +3,7 @@
 //
 // Each rule file is a FLAT object { assertName: assertDef, ... }, not the
 // top-level .pi/asserts.json shape (which wraps asserts under local/repos/),
-// so we validate each assert definition against schema.$defs.assert directly.
+// so we validate each entry definition against schema.$defs.entry directly.
 // The `$schema` key atop each rule file ("../pi-assert/schema.json") is the
 // same pointer used here; it is skipped (not itself an assert).
 //
@@ -53,7 +53,7 @@ if (!existsSync(SCHEMA_PATH)) {
 }
 
 const schema = JSON.parse(readFileSync(SCHEMA_PATH, 'utf8'));
-const validate = ajv_compile(schema.$defs.assert);
+const validate = ajv_compile(schema.$defs.entry);
 
 function ajv_compile(assertSchema) {
   const ajv = new Ajv({ allErrors: true, strict: false });
