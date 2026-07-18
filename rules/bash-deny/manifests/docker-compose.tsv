@@ -1,0 +1,1 @@
+docker compose down	deny-docker-compose-down	Blocks stopping and removing a Compose application with docker compose down.

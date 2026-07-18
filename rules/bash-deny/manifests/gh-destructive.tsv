@@ -1,0 +1,7 @@
+repo delete	deny-gh-repo-delete	Blocks GitHub repository deletion with gh repo delete.
+pr merge	deny-gh-pr-merge	Blocks pull-request merges with gh pr merge.
+release delete	deny-gh-release-delete	Blocks GitHub release deletion with gh release delete.
+api --method DELETE	deny-gh-api-delete	Blocks DELETE requests sent by gh api with --method.
+api --method=DELETE	deny-gh-api-delete-long-equals	Blocks DELETE requests sent by gh api with --method=DELETE.
+api -X DELETE	deny-gh-api-delete-short	Blocks DELETE requests sent by gh api with -X.
+api -X=DELETE	deny-gh-api-delete-short-equals	Blocks DELETE requests sent by gh api with -X=DELETE.

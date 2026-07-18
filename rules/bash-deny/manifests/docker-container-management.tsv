@@ -1,0 +1,3 @@
+run	deny-docker-run	Blocks creating and starting containers with docker run.
+exec	deny-docker-exec	Blocks running commands inside containers with docker exec.
+rm	deny-docker-rm	Blocks container removal with docker rm.

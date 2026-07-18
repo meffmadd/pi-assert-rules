@@ -1,0 +1,3 @@
+rmi	deny-docker-rmi	Blocks image removal with docker rmi.
+system prune	deny-docker-system-prune	Blocks removal of unused Docker data with docker system prune.
+volume rm	deny-docker-volume-rm	Blocks volume removal with docker volume rm.

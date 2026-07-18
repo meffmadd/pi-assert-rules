@@ -1,0 +1,74 @@
+{
+  "deny-docker-run": {
+    "description": "Blocks creating and starting containers with docker run.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker run' -i \"$CMD\" -q"
+  },
+  "deny-docker-exec": {
+    "description": "Blocks running commands inside containers with docker exec.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker exec' -i \"$CMD\" -q"
+  },
+  "deny-docker-rm": {
+    "description": "Blocks container removal with docker rm.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker rm' -i \"$CMD\" -q"
+  },
+  "deny-docker-container-management": {
+    "description": "Blocks Docker container creation, in-container execution, and removal.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-docker-run",
+      "meffmadd/pi-assert-rules/deny-docker-exec",
+      "meffmadd/pi-assert-rules/deny-docker-rm"
+    ]
+  },
+  "deny-docker-rmi": {
+    "description": "Blocks image removal with docker rmi.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker rmi' -i \"$CMD\" -q"
+  },
+  "deny-docker-system-prune": {
+    "description": "Blocks removal of unused Docker data with docker system prune.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker system prune' -i \"$CMD\" -q"
+  },
+  "deny-docker-volume-rm": {
+    "description": "Blocks volume removal with docker volume rm.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker volume rm' -i \"$CMD\" -q"
+  },
+  "deny-docker-cleanup": {
+    "description": "Blocks Docker image, volume, and system cleanup operations.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-docker-rmi",
+      "meffmadd/pi-assert-rules/deny-docker-system-prune",
+      "meffmadd/pi-assert-rules/deny-docker-volume-rm"
+    ]
+  },
+  "deny-docker-compose-down": {
+    "description": "Blocks stopping and removing a Compose application with docker compose down.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker compose down' -i \"$CMD\" -q"
+  }
+}
