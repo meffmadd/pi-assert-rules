@@ -14,6 +14,10 @@ command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || {
   exit 1
 }
 
+printf -- '--- deny-docker (bare command)\n'
+tc deny-docker 1 bash '{"command":"docker","timeout":30}'
+tc deny-docker 1 bash '{"command":"docker ps","timeout":30}'
+
 printf -- '--- deny-docker-container-management atoms\n'
 tc deny-docker-run 1 bash '{"command":"docker run alpine true","timeout":30}'
 tc deny-docker-exec 1 bash '{"command":"docker exec app sh","timeout":30}'

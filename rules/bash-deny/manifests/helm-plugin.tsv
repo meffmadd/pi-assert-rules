@@ -1,1 +1,2 @@
+helm	deny-helm	Blocks all Helm invocations, including the bare helm command.
 plugin install	deny-helm-plugin	Blocks Helm plugin installs (helm plugin install).

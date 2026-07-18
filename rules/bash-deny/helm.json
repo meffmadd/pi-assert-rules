@@ -40,6 +40,14 @@
       "meffmadd/pi-assert-rules/deny-helm-rollback"
     ]
   },
+  "deny-helm": {
+    "description": "Blocks all Helm invocations, including the bare helm command.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm' -i \"$CMD\" -q"
+  },
   "deny-helm-plugin": {
     "description": "Blocks Helm plugin installs (helm plugin install).",
     "hook": "tool_call",

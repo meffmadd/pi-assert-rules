@@ -20,6 +20,10 @@ command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || {
   exit 1
 }
 
+printf -- '--- deny-git (bare command)\n'
+tc deny-git 1 bash '{"command":"git","timeout":30}'
+tc deny-git 1 bash '{"command":"git status","timeout":30}'
+
 printf -- '--- deny-git-external\n'
 tc deny-git-external 1 bash '{"command":"git -C ../repo log","timeout":30}'
 tc deny-git-external 1 bash '{"command":"git -C","timeout":30}'

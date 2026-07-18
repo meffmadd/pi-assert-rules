@@ -1,3 +1,4 @@
+git	deny-git	Blocks all git invocations, including the bare git command.
 -C	deny-git-external	Blocks git operations against an external repository path (git -C <path> ...).
 commit	deny-git-commit	Blocks local history commits (git commit).
 push	deny-git-push	Blocks remote uploads (git push).

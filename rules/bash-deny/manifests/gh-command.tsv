@@ -1,0 +1,1 @@
+gh	deny-gh	Blocks all GitHub CLI invocations, including the bare gh command.

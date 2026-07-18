@@ -1,4 +1,12 @@
 {
+  "deny-gh": {
+    "description": "Blocks all GitHub CLI invocations, including the bare gh command.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'gh' -i \"$CMD\" -q"
+  },
   "deny-gh-repo-delete": {
     "description": "Blocks GitHub repository deletion with gh repo delete.",
     "hook": "tool_call",

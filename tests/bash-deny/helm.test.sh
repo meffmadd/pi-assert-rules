@@ -15,6 +15,10 @@ command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || {
   exit 1
 }
 
+printf -- '--- deny-helm (bare command)\n'
+tc deny-helm 1 bash '{"command":"helm","timeout":30}'
+tc deny-helm 1 bash '{"command":"helm list","timeout":30}'
+
 printf -- '--- deny-helm-release atoms\n'
 tc deny-helm-upgrade 1 bash '{"command":"helm upgrade app ./c","timeout":30}'
 tc deny-helm-install 1 bash '{"command":"helm install app ./c","timeout":30}'

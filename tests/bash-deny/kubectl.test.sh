@@ -17,6 +17,10 @@ command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || {
   exit 1
 }
 
+printf -- '--- deny-kubectl (bare command)\n'
+tc deny-kubectl 1 bash '{"command":"kubectl","timeout":30}'
+tc deny-kubectl 1 bash '{"command":"kubectl get pods","timeout":30}'
+
 printf -- '--- deny-k-alias (catches all `k ...`, spares kubectl)\n'
 tc deny-k-alias 1 bash '{"command":"k get pods","timeout":30}'
 tc deny-k-alias 1 bash '{"command":"k","timeout":30}'

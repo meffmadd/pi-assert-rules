@@ -14,6 +14,10 @@ command -v bash-deny >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 || {
   exit 1
 }
 
+printf -- '--- deny-gh (bare command)\n'
+tc deny-gh 1 bash '{"command":"gh","timeout":30}'
+tc deny-gh 1 bash '{"command":"gh repo view owner/repo","timeout":30}'
+
 printf -- '--- destructive gh subcommands\n'
 tc deny-gh-repo-delete 1 bash '{"command":"gh repo delete owner/repo --yes","timeout":30}'
 tc deny-gh-pr-merge 1 bash '{"command":"gh pr merge 42 --merge","timeout":30}'

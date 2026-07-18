@@ -1,4 +1,12 @@
 {
+  "deny-docker": {
+    "description": "Blocks all Docker invocations, including the bare docker command.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'docker' -i \"$CMD\" -q"
+  },
   "deny-docker-run": {
     "description": "Blocks creating and starting containers with docker run.",
     "hook": "tool_call",
