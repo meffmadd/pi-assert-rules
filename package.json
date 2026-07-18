@@ -1,0 +1,8 @@
+{
+  "name": "pi-assert-rules",
+  "private": true,
+  "description": "pi-assert rules repo — installable asserts, presets, and skills.",
+  "pi": {
+    "skills": ["./skills"]
+  }
+}
