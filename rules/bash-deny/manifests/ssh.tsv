@@ -1,0 +1,1 @@
+ssh	deny-ssh	Blocks all SSH invocations, including the bare ssh command.

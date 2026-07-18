@@ -1,0 +1,10 @@
+{
+  "deny-ssh": {
+    "description": "Blocks all SSH invocations, including the bare ssh command.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'ssh' -i \"$CMD\" -q"
+  }
+}
