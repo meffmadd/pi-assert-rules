@@ -1,0 +1,1 @@
+plugin install	deny-helm-plugin	Blocks Helm plugin installs (helm plugin install).

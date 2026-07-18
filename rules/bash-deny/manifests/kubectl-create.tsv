@@ -1,0 +1,4 @@
+create	deny-kubectl-create-command	Blocks new resource creation with kubectl create.
+apply	deny-kubectl-apply	Blocks resource application with kubectl apply.
+replace	deny-kubectl-replace	Blocks resource replacement with kubectl replace.
+run	deny-kubectl-run	Blocks workload creation with kubectl run.

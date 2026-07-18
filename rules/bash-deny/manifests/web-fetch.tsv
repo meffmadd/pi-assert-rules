@@ -1,0 +1,4 @@
+curl	deny-curl	Blocks curl network requests.
+wget	deny-wget	Blocks wget network requests.
+aria2c	deny-aria2c	Blocks aria2c network requests.
+axel	deny-axel	Blocks axel network requests.

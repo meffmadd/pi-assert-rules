@@ -2,31 +2,131 @@
   "deny-k-alias": {
     "description": "Blocks the popular 'k' alias for kubectl — catches all 'k ...' invocations regardless of subcommand. Install separately from kubectl-* to guard the alias even when kubectl itself is allowed.",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
+    "filter": {
+      "toolName": "bash"
+    },
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'k' -i \"$CMD\" -q"
-  },
-  "deny-kubectl-create": {
-    "description": "Blocks new resource creation: kubectl create, apply, replace, run.",
-    "hook": "tool_call",
-    "filter": { "toolName": "bash" },
-    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl create;kubectl apply;kubectl replace;kubectl run' -i \"$CMD\" -q"
-  },
-  "deny-kubectl-delete": {
-    "description": "Blocks resource removal: kubectl delete, drain, taint.",
-    "hook": "tool_call",
-    "filter": { "toolName": "bash" },
-    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl delete;kubectl drain;kubectl taint' -i \"$CMD\" -q"
-  },
-  "deny-kubectl-mutate": {
-    "description": "Blocks in-place mutations: kubectl edit, scale, patch, rollout.",
-    "hook": "tool_call",
-    "filter": { "toolName": "bash" },
-    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl edit;kubectl scale;kubectl patch;kubectl rollout' -i \"$CMD\" -q"
   },
   "deny-kubectl-exec": {
     "description": "Blocks running commands inside a pod (kubectl exec).",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
+    "filter": {
+      "toolName": "bash"
+    },
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl exec' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-create-command": {
+    "description": "Blocks new resource creation with kubectl create.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl create' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-apply": {
+    "description": "Blocks resource application with kubectl apply.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl apply' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-replace": {
+    "description": "Blocks resource replacement with kubectl replace.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl replace' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-run": {
+    "description": "Blocks workload creation with kubectl run.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl run' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-create": {
+    "description": "Blocks new resource creation: kubectl create, apply, replace, and run.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-kubectl-create-command",
+      "meffmadd/pi-assert-rules/deny-kubectl-apply",
+      "meffmadd/pi-assert-rules/deny-kubectl-replace",
+      "meffmadd/pi-assert-rules/deny-kubectl-run"
+    ]
+  },
+  "deny-kubectl-delete-command": {
+    "description": "Blocks resource removal with kubectl delete.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl delete' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-drain": {
+    "description": "Blocks node draining with kubectl drain.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl drain' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-taint": {
+    "description": "Blocks node taint changes with kubectl taint.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl taint' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-delete": {
+    "description": "Blocks resource removal: kubectl delete, drain, and taint.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-kubectl-delete-command",
+      "meffmadd/pi-assert-rules/deny-kubectl-drain",
+      "meffmadd/pi-assert-rules/deny-kubectl-taint"
+    ]
+  },
+  "deny-kubectl-edit": {
+    "description": "Blocks interactive resource edits with kubectl edit.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl edit' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-scale": {
+    "description": "Blocks workload scaling with kubectl scale.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl scale' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-patch": {
+    "description": "Blocks resource patches with kubectl patch.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl patch' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-rollout": {
+    "description": "Blocks rollout operations with kubectl rollout.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'kubectl rollout' -i \"$CMD\" -q"
+  },
+  "deny-kubectl-mutate": {
+    "description": "Blocks in-place mutations: kubectl edit, scale, patch, and rollout.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-kubectl-edit",
+      "meffmadd/pi-assert-rules/deny-kubectl-scale",
+      "meffmadd/pi-assert-rules/deny-kubectl-patch",
+      "meffmadd/pi-assert-rules/deny-kubectl-rollout"
+    ]
   }
 }

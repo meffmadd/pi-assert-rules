@@ -1,14 +1,51 @@
 {
-  "deny-helm-release-mgmt": {
-    "description": "Blocks Helm release lifecycle changes: uninstall, install, upgrade, rollback.",
+  "deny-helm-uninstall": {
+    "description": "Blocks Helm release uninstallations.",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
-    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm uninstall;helm install;helm upgrade;helm rollback' -i \"$CMD\" -q"
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm uninstall' -i \"$CMD\" -q"
+  },
+  "deny-helm-install": {
+    "description": "Blocks Helm release installations.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm install' -i \"$CMD\" -q"
+  },
+  "deny-helm-upgrade": {
+    "description": "Blocks Helm release upgrades.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm upgrade' -i \"$CMD\" -q"
+  },
+  "deny-helm-rollback": {
+    "description": "Blocks Helm release rollbacks.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm rollback' -i \"$CMD\" -q"
+  },
+  "deny-helm-release-mgmt": {
+    "description": "Blocks Helm release lifecycle changes: uninstall, install, upgrade, and rollback.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-helm-uninstall",
+      "meffmadd/pi-assert-rules/deny-helm-install",
+      "meffmadd/pi-assert-rules/deny-helm-upgrade",
+      "meffmadd/pi-assert-rules/deny-helm-rollback"
+    ]
   },
   "deny-helm-plugin": {
     "description": "Blocks Helm plugin installs (helm plugin install).",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
+    "filter": {
+      "toolName": "bash"
+    },
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'helm plugin install' -i \"$CMD\" -q"
   }
 }

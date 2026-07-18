@@ -1,0 +1,2 @@
+k	deny-k-alias	Blocks the popular 'k' alias for kubectl — catches all 'k ...' invocations regardless of subcommand. Install separately from kubectl-* to guard the alias even when kubectl itself is allowed.
+kubectl exec	deny-kubectl-exec	Blocks running commands inside a pod (kubectl exec).

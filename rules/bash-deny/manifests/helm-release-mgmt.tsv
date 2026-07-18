@@ -1,0 +1,4 @@
+uninstall	deny-helm-uninstall	Blocks Helm release uninstallations.
+install	deny-helm-install	Blocks Helm release installations.
+upgrade	deny-helm-upgrade	Blocks Helm release upgrades.
+rollback	deny-helm-rollback	Blocks Helm release rollbacks.

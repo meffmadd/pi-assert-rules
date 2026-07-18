@@ -2,31 +2,98 @@
   "deny-git-external": {
     "description": "Blocks git operations against an external repository path (git -C <path> ...).",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
+    "filter": {
+      "toolName": "bash"
+    },
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git -C' -i \"$CMD\" -q"
   },
   "deny-git-commit": {
     "description": "Blocks local history commits (git commit).",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
+    "filter": {
+      "toolName": "bash"
+    },
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git commit' -i \"$CMD\" -q"
   },
   "deny-git-push": {
     "description": "Blocks remote uploads (git push).",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
+    "filter": {
+      "toolName": "bash"
+    },
     "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git push' -i \"$CMD\" -q"
   },
-  "deny-git-history-rewrite": {
-    "description": "Blocks history-rewriting commands (git reset --hard, git rebase).",
+  "deny-git-reset-hard": {
+    "description": "Blocks hard resets while allowing soft resets.",
     "hook": "tool_call",
-    "filter": { "toolName": "bash" },
-    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git reset --hard;git rebase' -i \"$CMD\" -q"
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git reset --hard' -i \"$CMD\" -q"
+  },
+  "deny-git-rebase": {
+    "description": "Blocks history-rewriting rebases.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git rebase' -i \"$CMD\" -q"
+  },
+  "deny-git-history-rewrite": {
+    "description": "Blocks history-rewriting commands: git reset --hard and git rebase.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-git-reset-hard",
+      "meffmadd/pi-assert-rules/deny-git-rebase"
+    ]
+  },
+  "deny-git-clean": {
+    "description": "Blocks removal of untracked files (git clean).",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git clean' -i \"$CMD\" -q"
+  },
+  "deny-git-branch-force-delete": {
+    "description": "Blocks force deletion of branches (git branch -D).",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git branch -D' -i \"$CMD\" -q"
+  },
+  "deny-git-stash-drop": {
+    "description": "Blocks removal of a stash entry (git stash drop).",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git stash drop' -i \"$CMD\" -q"
+  },
+  "deny-git-stash-clear": {
+    "description": "Blocks removal of all stash entries (git stash clear).",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git stash clear' -i \"$CMD\" -q"
+  },
+  "deny-git-checkout-discard": {
+    "description": "Blocks discarding working-tree changes (git checkout --).",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git checkout --' -i \"$CMD\" -q"
   },
   "deny-git-destructive": {
-    "description": "Blocks work-loss commands: git clean, git branch -D (force delete), git stash drop, git stash clear, git checkout -- (discard working tree).",
-    "hook": "tool_call",
-    "filter": { "toolName": "bash" },
-    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'git clean;git branch -D;git stash drop;git stash clear;git checkout --' -i \"$CMD\" -q"
+    "description": "Blocks work-loss commands: git clean, git branch -D, git stash drop, git stash clear, and git checkout --.",
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-git-clean",
+      "meffmadd/pi-assert-rules/deny-git-branch-force-delete",
+      "meffmadd/pi-assert-rules/deny-git-stash-drop",
+      "meffmadd/pi-assert-rules/deny-git-stash-clear",
+      "meffmadd/pi-assert-rules/deny-git-checkout-discard"
+    ]
   }
 }

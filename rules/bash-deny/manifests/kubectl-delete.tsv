@@ -1,0 +1,3 @@
+delete	deny-kubectl-delete-command	Blocks resource removal with kubectl delete.
+drain	deny-kubectl-drain	Blocks node draining with kubectl drain.
+taint	deny-kubectl-taint	Blocks node taint changes with kubectl taint.

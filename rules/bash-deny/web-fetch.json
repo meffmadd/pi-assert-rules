@@ -1,8 +1,43 @@
 {
+  "deny-curl": {
+    "description": "Blocks curl network requests.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'curl' -i \"$CMD\" -q"
+  },
+  "deny-wget": {
+    "description": "Blocks wget network requests.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'wget' -i \"$CMD\" -q"
+  },
+  "deny-aria2c": {
+    "description": "Blocks aria2c network requests.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'aria2c' -i \"$CMD\" -q"
+  },
+  "deny-axel": {
+    "description": "Blocks axel network requests.",
+    "hook": "tool_call",
+    "filter": {
+      "toolName": "bash"
+    },
+    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'axel' -i \"$CMD\" -q"
+  },
   "deny-web-fetch": {
     "description": "Blocks network downloaders / web-fetch CLIs (curl, wget, aria2c, axel).",
-    "hook": "tool_call",
-    "filter": { "toolName": "bash" },
-    "shell": "CMD=$(printf '%s' \"$PI_TOOL_INPUT\" | jq -r '.command // empty'); [ -z \"$CMD\" ] || bash-deny -r 'curl;wget;aria2c;axel' -i \"$CMD\" -q"
+    "preset": [
+      "meffmadd/pi-assert-rules/deny-curl",
+      "meffmadd/pi-assert-rules/deny-wget",
+      "meffmadd/pi-assert-rules/deny-aria2c",
+      "meffmadd/pi-assert-rules/deny-axel"
+    ]
   }
 }

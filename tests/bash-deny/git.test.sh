@@ -43,23 +43,43 @@ tc deny-git-push 0 bash '{"command":"git status","timeout":30}'
 tc deny-git-push 0 bash '{"command":"sudo git status","timeout":30}'
 tc deny-git-push 0 bash '{"command":"echo safe && git status","timeout":30}'
 
-printf -- '--- deny-git-history-rewrite\n'
-tc deny-git-history-rewrite 1 bash '{"command":"git reset --hard HEAD~3","timeout":30}'
-tc deny-git-history-rewrite 1 bash '{"command":"git rebase main","timeout":30}'
-tc deny-git-history-rewrite 1 bash '{"command":"git reset --hard","timeout":30}'
-tc deny-git-history-rewrite 0 bash '{"command":"git reset --soft HEAD~3","timeout":30}'
-tc deny-git-history-rewrite 0 bash '{"command":"git reset HEAD~3","timeout":30}'
-tc deny-git-history-rewrite 0 bash '{"command":"git status","timeout":30}'
+printf -- '--- deny-git-reset-hard\n'
+tc deny-git-reset-hard 1 bash '{"command":"git reset --hard HEAD~3","timeout":30}'
+tc deny-git-reset-hard 1 bash '{"command":"git reset --hard","timeout":30}'
+tc deny-git-reset-hard 0 bash '{"command":"git reset --soft HEAD~3","timeout":30}'
+tc deny-git-reset-hard 0 bash '{"command":"git reset HEAD~3","timeout":30}'
 
-printf -- '--- deny-git-destructive\n'
-tc deny-git-destructive 1 bash '{"command":"git clean -fd","timeout":30}'
-tc deny-git-destructive 1 bash '{"command":"git branch -D feature","timeout":30}'
-tc deny-git-destructive 1 bash '{"command":"git stash drop","timeout":30}'
-tc deny-git-destructive 1 bash '{"command":"git stash clear","timeout":30}'
-tc deny-git-destructive 1 bash '{"command":"git checkout -- file","timeout":30}'
-tc deny-git-destructive 1 bash '{"command":"sudo git clean -fd","timeout":30}'
-tc deny-git-destructive 0 bash '{"command":"git branch -d feature","timeout":30}'
-tc deny-git-destructive 0 bash '{"command":"git stash list","timeout":30}'
-tc deny-git-destructive 0 bash '{"command":"git status","timeout":30}'
+printf -- '--- deny-git-rebase\n'
+tc deny-git-rebase 1 bash '{"command":"git rebase main","timeout":30}'
+tc deny-git-rebase 0 bash '{"command":"git status","timeout":30}'
+
+printf -- '--- deny-git-destructive atoms\n'
+tc deny-git-clean 1 bash '{"command":"git clean -fd","timeout":30}'
+tc deny-git-branch-force-delete 1 bash '{"command":"git branch -D feature","timeout":30}'
+tc deny-git-stash-drop 1 bash '{"command":"git stash drop","timeout":30}'
+tc deny-git-stash-clear 1 bash '{"command":"git stash clear","timeout":30}'
+tc deny-git-checkout-discard 1 bash '{"command":"git checkout -- file","timeout":30}'
+tc deny-git-clean 1 bash '{"command":"sudo git clean -fd","timeout":30}'
+tc deny-git-branch-force-delete 0 bash '{"command":"git branch -d feature","timeout":30}'
+tc deny-git-stash-drop 0 bash '{"command":"git stash list","timeout":30}'
+tc deny-git-clean 0 bash '{"command":"git status","timeout":30}'
+
+printf -- '--- presets\n'
+if jq -e '
+  .["deny-git-history-rewrite"].preset == [
+    "meffmadd/pi-assert-rules/deny-git-reset-hard",
+    "meffmadd/pi-assert-rules/deny-git-rebase"
+  ] and .["deny-git-destructive"].preset == [
+    "meffmadd/pi-assert-rules/deny-git-clean",
+    "meffmadd/pi-assert-rules/deny-git-branch-force-delete",
+    "meffmadd/pi-assert-rules/deny-git-stash-drop",
+    "meffmadd/pi-assert-rules/deny-git-stash-clear",
+    "meffmadd/pi-assert-rules/deny-git-checkout-discard"
+  ]
+' "$TARGET" >/dev/null 2>&1; then
+  PASSED=$((PASSED+1)); printf '  %b✓%b Git presets contain their direct atomic members\n' "$C_OK" "$C_N"
+else
+  FAILED=$((FAILED+1)); printf '  %b✗%b Git presets contain their direct atomic members\n' "$C_BAD" "$C_N"
+fi
 
 summary

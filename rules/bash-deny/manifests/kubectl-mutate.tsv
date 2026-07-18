@@ -1,0 +1,4 @@
+edit	deny-kubectl-edit	Blocks interactive resource edits with kubectl edit.
+scale	deny-kubectl-scale	Blocks workload scaling with kubectl scale.
+patch	deny-kubectl-patch	Blocks resource patches with kubectl patch.
+rollout	deny-kubectl-rollout	Blocks rollout operations with kubectl rollout.

@@ -1,0 +1,2 @@
+reset --hard	deny-git-reset-hard	Blocks hard resets while allowing soft resets.
+rebase	deny-git-rebase	Blocks history-rewriting rebases.

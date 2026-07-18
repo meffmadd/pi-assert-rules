@@ -1,0 +1,5 @@
+clean	deny-git-clean	Blocks removal of untracked files (git clean).
+branch -D	deny-git-branch-force-delete	Blocks force deletion of branches (git branch -D).
+stash drop	deny-git-stash-drop	Blocks removal of a stash entry (git stash drop).
+stash clear	deny-git-stash-clear	Blocks removal of all stash entries (git stash clear).
+checkout --	deny-git-checkout-discard	Blocks discarding working-tree changes (git checkout --).
